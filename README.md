@@ -56,6 +56,54 @@ python -m pip install .
 The package exposes memoidx and memoidx-init. Run python -m memoidx directly
 from a checkout when a package installation is not needed.
 
+### Build the Windows installer
+
+Installer builds require:
+
+- Windows PowerShell
+- Python 3.11 or newer
+- PyInstaller (the build script installs or upgrades it with pip)
+- Inno Setup 6, including ISCC.exe, to create the installer
+
+From the repository root, run:
+
+~~~powershell
+.\scripts\build_windows_installer.ps1
+~~~
+
+The script first builds the self-contained portable executables:
+
+~~~text
+dist/windows/memoidx.exe
+dist/windows/memoidx-init.exe
+~~~
+
+It then uses Inno Setup to create:
+
+~~~text
+dist/installer/install.exe
+~~~
+
+To build only the portable executables without Inno Setup:
+
+~~~powershell
+.\scripts\build_windows_installer.ps1 -SkipInno
+~~~
+
+For a signed release, pass a publisher PFX certificate. The script signs both
+portable executables and `dist/installer/install.exe` (the PFX password is
+requested securely if omitted):
+
+~~~powershell
+.\scripts\build_windows_installer.ps1 `
+  -CertificatePath C:\secure\memoidx-release.pfx `
+  -TimestampUrl https://timestamp.digicert.com
+~~~
+
+The generated installer is per-user and installs under
+%LOCALAPPDATA%\\MemoIdx, so administrator privileges are not required. End
+users of the generated installer do not need Python.
+
 ### How the system works
 
 MemoIdx has three levels of data:

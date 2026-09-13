@@ -1,6 +1,6 @@
 # Windows installer
 
-The release artifact is `MemoIdx-Setup.exe`. End users do not need Python.
+The release artifact is `dist/installer/install.exe`. End users do not need Python.
 The build machine needs Python, PyInstaller, and Inno Setup.
 
 From a Windows checkout, run PowerShell:
@@ -35,5 +35,17 @@ The installer uses `UseSetupLdr=no`, so it does not extract a setup engine into
 Error 4551 path. The installer cannot prove that a host platform supports or actually invokes a
 native subagent. Use `docs/subagent-verification.md` in a fresh host session.
 
-Before distributing `MemoIdx-Setup.exe`, sign it with the publisher's Windows
-code-signing certificate and test uninstall/reinstall on a clean Windows user.
+For a signed release, provide a Windows SDK `signtool.exe` and a publisher's
+PFX certificate. The script signs both portable executables before packaging,
+then signs the installer too:
+
+```powershell
+.\scripts\build_windows_installer.ps1 `
+  -CertificatePath C:\secure\memoidx-release.pfx `
+  -TimestampUrl https://timestamp.digicert.com
+```
+
+The PFX password is requested securely when `-CertificatePassword` is omitted.
+For CI, pass the password through the build secret mechanism. Test
+uninstall/reinstall on a clean Windows user before distributing the signed
+installer.
