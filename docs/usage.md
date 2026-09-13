@@ -1,8 +1,8 @@
 # Development CLI
 
-Native memory selection is now delegated through the shared memoidx-scout.md
-contract. Initialization installs Codex and Claude Code native definitions and
-appends delegation routing even when MemoIdx.md already exists. See
+Native memory operations are now delegated through the shared memoidx-scout.md
+operator contract. Initialization installs Codex and Claude Code native
+definitions and appends delegation routing even when MemoIdx.md already exists. See
 [subagent-verification.md](subagent-verification.md) for a disposable fixture,
 host-specific execution evidence and LUT checks. Other platforms use an explicit
 native-child adapter or report main-agent-fallback; do not infer delegation

@@ -74,7 +74,7 @@ def initialize_workspace(workspace: str | Path | None = None, *, user_root=None)
     for name in ("AGENTS.md", "CLAUDE.md"):
         path = workspace / name
         content = path.read_text(encoding="utf-8")
-        if "<!-- memoidx-scout-routing-v1 -->" not in content:
+        if "<!-- memoidx-scout-routing-v2 -->" not in content:
             atomic_write(path, content + "\n" + ROUTING)
             if result["files"][name] == "kept":
                 result["files"][name] = "updated"

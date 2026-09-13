@@ -3,7 +3,9 @@
 Supported generated adapters: Codex custom-agent TOML and Claude Code
 subagent Markdown. Other hosts can pass memoidx-scout.md to their native
 child tool; without that tool, report main-agent-fallback. This is not a
-claim that every host automatically discovers these files.
+claim that every host automatically discovers these files. The child now
+executes the complete requested memory operation, including maintenance and
+verification.
 
 ## Install
 
@@ -42,10 +44,11 @@ memoidx edit show --id RETURNED_ID
 Save the ID and LUT from edit show. Open a NEW host session in this directory.
 Send this prompt (replace the native name for the host):
 
-> Delegate lookup of scout_probe_731 to the native memoidx_scout subagent
-> (Claude: memoidx-scout). Pass this workspace, project scope and limit 1.
-> Do not search in the main agent and do not recall yet. Wait for the child.
-> Return its selected JSON and identify the native child task/thread event.
+> Delegate the complete retrieval of scout_probe_731 to the native
+> memoidx_scout subagent (Claude: memoidx-scout). Pass this workspace, project
+> scope and limit 1. Do not search in the main agent. Wait for the child to
+> complete the operation and return its JSON report with the native child
+> task/thread event.
 > If delegation is unavailable, report it; do not simulate a subagent.
 
 ## Codex
