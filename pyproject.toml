@@ -15,4 +15,4 @@ memoidx-init = "memoidx.bootstrap:main"
 include = ["memoidx*"]
 
 [tool.setuptools.package-data]
-memoidx = ["protocol.md"]
+memoidx = ["protocol.md", "memoidx-cli.md", "memoidx-scout.md"]

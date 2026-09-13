@@ -12,6 +12,8 @@ def load_roots(config_path: str | Path | None = None, project_root: str | Path |
     if config_path is None:
         user_root = Path.home() / ".memoidx"
         configured_project = (Path(project_root) / ".memoidx").absolute() if project_root else find_project_root(Path.cwd())
+        if configured_project is not None and (configured_project / "roots.json").is_file():
+            return load_roots(configured_project / "roots.json")
         return user_root.resolve(), configured_project
     path = Path(config_path).resolve()
     try:

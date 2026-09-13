@@ -20,6 +20,25 @@ def main():
     parser.add_argument("--json", action="store_true")
     subparsers = parser.add_subparsers(dest="command")
     subparsers.add_parser("protocol")
+    subparsers.add_parser("reference")
+    context_parser = subparsers.add_parser("context")
+    context_parser.add_argument("query")
+    context_parser.add_argument("--scope", choices=("user", "project", "both"), default="both")
+    context_parser.add_argument("--limit", type=int, default=5)
+    context_parser.add_argument("--max-chars", type=int, default=6000)
+    for name in ("remember", "update"):
+        child = subparsers.add_parser(name)
+        child.add_argument("--scope", choices=("user", "project"), default="project")
+        content = child.add_mutually_exclusive_group(required=True)
+        content.add_argument("--content")
+        content.add_argument("--stdin", action="store_true")
+        if name == "remember":
+            child.add_argument("--source", required=True)
+            child.add_argument("--file", default="inbox.md")
+            child.add_argument("--retention", choices=("normal", "pinned"), default="normal")
+        else:
+            child.add_argument("--id", required=True)
+            child.add_argument("--expected-revision", required=True)
     init_parser = subparsers.add_parser("init")
     init_parser.add_argument("--scope", choices=("user", "project"), required=True)
     for command in ("recover", "tree", "doctor", "search", "recall", "gc", "restore", "forget", "maintenance", "edit", "trash", "explain", "browse"):
@@ -64,9 +83,10 @@ def main():
 
 
 def dispatch(args):
-        if args.command == "protocol":
+        if args.command in ("protocol", "reference"):
             from importlib.resources import files
-            return files("memoidx").joinpath("protocol.md").read_text(encoding="utf-8")
+            name = "protocol.md" if args.command == "protocol" else "memoidx-cli.md"
+            return files("memoidx").joinpath(name).read_text(encoding="utf-8")
         from . import edit, maintenance
         from .transactions import recover
         from .tree import tree
@@ -78,6 +98,13 @@ def dispatch(args):
         from .forget import forget
         from .folders import refresh
         user_root, project_root = load_roots(args.config)
+        if args.command == "context":
+            from .high_frequency import context, render_context
+            roots = {"user": user_root, "project": project_root}
+            if args.scope != "both":
+                roots = {args.scope: roots[args.scope]}
+            result = context(roots, args.query, limit=args.limit, max_chars=args.max_chars)
+            return result if args.json else render_context(result)
         root = user_root if args.scope == "user" else project_root
         if root is None:
             raise ValueError("PROJECT_ROOT_NOT_FOUND: specify --config")
@@ -85,6 +112,14 @@ def dispatch(args):
             return str(initialize(root))
         if not root.is_dir():
             raise ValueError("ROOT_NOT_INITIALIZED")
+        if args.command in ("remember", "update"):
+            import sys
+            content = sys.stdin.read() if args.stdin else args.content
+            if args.command == "remember":
+                from .high_frequency import remember
+                return remember(root, content, args.source, file=args.file, retention=args.retention)
+            return edit.update_memory(root, {"id": args.id,
+                "expected_revision": args.expected_revision, "content": content})
         if args.command == "recover":
             recover(root)
             return {"status": "recovered"}
