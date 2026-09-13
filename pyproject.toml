@@ -9,6 +9,7 @@ requires-python = ">=3.11"
 
 [project.scripts]
 memoidx = "memoidx.cli:main"
+memoidx-init = "memoidx.bootstrap:main"
 
 [tool.setuptools.packages.find]
 include = ["memoidx*"]
