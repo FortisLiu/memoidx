@@ -20,7 +20,7 @@ New-Item -ItemType Directory -Path $dist | Out-Null
 python -m PyInstaller --noconfirm --clean --onefile --name memoidx `
     --distpath $dist --workpath (Join-Path $repo "build\pyinstaller") `
     --specpath (Join-Path $repo "build\pyinstaller") `
-    --collect-data memoidx (Join-Path $entrypoints "memoidx.py")
+    --collect-data memoidx (Join-Path $entrypoints "memoidx_cli.py")
 python -m PyInstaller --noconfirm --clean --onefile --name memoidx-init `
     --distpath $dist --workpath (Join-Path $repo "build\pyinstaller-init") `
     --specpath (Join-Path $repo "build\pyinstaller-init") `
