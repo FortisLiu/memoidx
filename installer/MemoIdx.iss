@@ -17,6 +17,9 @@ OutputDir=..\dist\installer
 OutputBaseFilename=install
 Compression=lzma2
 SolidCompression=yes
+; Avoid extracting and executing the Setup engine from %TEMP%, which is
+; blocked by Windows Application Control policies on some machines.
+UseSetupLdr=no
 WizardStyle=modern
 ChangesEnvironment=yes
 UninstallDisplayName=MemoIdx

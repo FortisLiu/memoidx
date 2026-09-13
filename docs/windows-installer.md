@@ -10,8 +10,9 @@ From a Windows checkout, run PowerShell:
 ```
 
 The script creates self-contained `dist/windows/memoidx.exe` and
-`dist/windows/memoidx-init.exe`, then packages them into
-`dist/installer/install.exe`. `--SkipInno` builds only the portable
+`dist/windows/memoidx-init.exe`, then packages them into an installer folder
+containing `dist/installer/install.exe` and its adjacent `.bin` payload files.
+`--SkipInno` builds only the portable
 executables for inspection.
 
 The installer uses a per-user install under `%LOCALAPPDATA%\\MemoIdx`, so admin
@@ -29,7 +30,9 @@ memoidx-init --workspace C:\\work\\my-project
 memoidx reference
 ```
 
-The installer cannot prove that a host platform supports or actually invokes a
+The installer uses `UseSetupLdr=no`, so it does not extract a setup engine into
+`%TEMP%` before running it. This avoids the common Windows Application Control
+Error 4551 path. The installer cannot prove that a host platform supports or actually invokes a
 native subagent. Use `docs/subagent-verification.md` in a fresh host session.
 
 Before distributing `MemoIdx-Setup.exe`, sign it with the publisher's Windows
