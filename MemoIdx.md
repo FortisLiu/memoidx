@@ -34,7 +34,10 @@ or facts that can be read directly from the current source tree.
 
 Edit memory when the user asks to change or remove a stored fact, or when a
 stored fact has been confirmed to be outdated. If the memory id is unknown,
-first ask the `memoidx-scout` subagent to locate the relevant unit.
+create and dispatch a `memoidx-scout` subagent using the workspace-local
+`memoidx-scout.md` created by `memoidx-init` at
+`<absolute-workspace>/memoidx-scout.md`; first ask it to locate the relevant
+unit. That exact generated file is the canonical scout contract.
 
 After adding, editing, or forgetting a unit, refresh the affected memory file
 abstraction and the parent folder `README.md` index.
@@ -95,7 +98,15 @@ recovery, and retention operations.
 
 1. Determine whether the memory belongs to the `project` scope or the `user` scope. Use `project` for facts specific to the current workspace, and `user` for durable preferences or instructions that apply across workspaces.
 
-2. Call `memoidx-scout` when the host supports it. Use it to find memory units related to the relevant keywords and return candidate IDs and file paths. When a content or summary draft is needed, ask the scout to draft it from the confirmed source material. The scout may propose text, but it must not modify any memory, invent facts, or apply a change. The main agent must review and approve every draft before writing it.
+2. Create and dispatch `memoidx-scout` from the workspace-local
+   `memoidx-scout.md` created by `memoidx-init` at
+   `<absolute-workspace>/memoidx-scout.md` (the `.codex` and `.claude` files
+   are registration adapters only). Use it to find memory units related to the
+   relevant keywords and return candidate IDs and file paths. When a content or
+   summary draft is needed, ask the scout to draft it from the confirmed source
+   material. The scout may propose text, but it must not modify any memory,
+   invent facts, or apply a change. The main agent must review and approve every
+   draft before writing it.
 
 3. Inspect the current content and revision before editing:
 
@@ -105,7 +116,13 @@ recovery, and retention operations.
 
    Use `--scope user` for a user-level memory. If an existing memory file already covers the fact, update that file instead of creating a duplicate merely because the wording differs.
 
-4. Ask `memoidx-scout` to propose the updated memory text when the edit requires content to be composed or rewritten. Give it the current content, the user's requested change, and any relevant source context. Verify that its draft contains only confirmed information, then update the memory unit with the exact revision returned by the inspection:
+4. Using the dispatched subagent created from the canonical
+   `<absolute-workspace>/memoidx-scout.md`, ask `memoidx-scout` to propose the
+   updated memory text when the edit requires content to be composed or
+   rewritten. Give it the current content, the user's requested change, and any
+   relevant source context. Verify that its draft contains only confirmed
+   information, then update the memory unit with the exact revision returned by
+   the inspection:
 
    ```text
    memoidx update --id <ID> --scope project \
@@ -125,7 +142,11 @@ recovery, and retention operations.
 
 5. If the command returns `REVISION_CONFLICT`, another process changed the memory after it was inspected. Run `memoidx edit show` again, reconsider the edit using the latest content, and submit the update with the new revision. Never continue with the old revision or overwrite a concurrent edit blindly.
 
-6. For a new fact, ask `memoidx-scout` to propose the memory text and the most suitable existing file, using only the user's confirmed fact and source. Review the proposal, then use `remember` and provide its source explicitly:
+6. For a new fact, use the subagent created from the canonical
+   `<absolute-workspace>/memoidx-scout.md` and ask `memoidx-scout` to propose
+   the memory text and the most suitable existing file, using only the user's
+   confirmed fact and source. Review the proposal, then use `remember` and
+   provide its source explicitly:
 
    ```text
    memoidx remember --content "durable fact" \
@@ -142,7 +163,12 @@ recovery, and retention operations.
 
    The command returns the current memory file content, its existing summary, and an `expected_source_hash`.
 
-8. Ask `memoidx-scout` to draft exactly three concise, nonempty, single-line summary strings from the memory file content returned by `maintenance read`. The scout must summarize only the content it was given and must not introduce new facts. The main agent reviews the draft before using it. Their meanings are:
+8. Dispatch the subagent from the canonical
+   `<absolute-workspace>/memoidx-scout.md` and ask `memoidx-scout` to draft
+   exactly three concise, nonempty, single-line summary strings from the memory
+   file content returned by `maintenance read`. The scout must summarize only
+   the content it was given and must not introduce new facts. The main agent
+   reviews the draft before using it. Their meanings are:
 
    1. The topic or domain covered by the file.
    2. What the file's memory units collectively cover.
@@ -218,7 +244,12 @@ recovery, and retention operations.
     3. `files` lists every memory file under the folder.
     4. Each file entry contains `path`, its relative memory-file path, and `summary`, the file's current three-line abstraction.
 
-13. Ask `memoidx-scout` to draft the folder's own three-line summary from the `files` entries and their contents. The scout must summarize the provided file information only; it must not invent folder facts. The main agent reviews the draft before applying it. For example:
+13. Dispatch the subagent from the canonical
+    `<absolute-workspace>/memoidx-scout.md` and ask `memoidx-scout` to draft the
+    folder's own three-line summary from the `files` entries and their contents.
+    The scout must summarize the provided file information only; it must not
+    invent folder facts. The main agent reviews the draft before applying it.
+    For example:
 
     ```json
     {
@@ -319,7 +350,9 @@ were actually used.
 
 ## How to forget
 
-The following workflows are assigned to the `memoidx-scout` subagent.
+The following workflows are assigned to a `memoidx-scout` subagent created and
+dispatched from the canonical workspace-local `memoidx-scout.md` generated by
+`memoidx-init`.
 
 ### When user ask to forget something
 1. Search the memory units for the ID:

@@ -6,6 +6,12 @@ absolute workspace path, the operation, the user's intent, and the requested
 scope. Do not assume you inherited the parent's conversation, working
 directory, or instructions.
 
+This file is the canonical scout contract. It is the workspace-local file
+created by `memoidx-init` at `<absolute-workspace>/memoidx-scout.md`; the native
+agent files under `.codex/agents` and `.claude/agents` only register a child
+that must use this exact generated file. The parent must create and dispatch
+the child from this contract, passing its absolute workspace path.
+
 Supported operations are `retrieve`, `remember`, `edit`, `forget`, and
 `maintain`. If the parent requests a combined operation, complete all of its
 steps in one task. Do not delegate to another agent.

@@ -1,8 +1,11 @@
 # Verify native MemoIdx delegation
 
-Supported generated adapters: Codex custom-agent TOML and Claude Code
-subagent Markdown. Other hosts can pass memoidx-scout.md to their native
-child tool; without that tool, report main-agent-fallback. This is not a
+The canonical scout contract is the workspace-local `memoidx-scout.md` created
+by `memoidx-init` at `<absolute-workspace>/memoidx-scout.md`. Create and
+dispatch every scout child from that exact generated file. Supported generated
+adapters are Codex custom-agent TOML and Claude Code subagent Markdown; other
+hosts can pass the canonical file to their native child tool. Without that
+tool, report main-agent-fallback. This is not a
 claim that every host automatically discovers these files. The child now
 executes the complete requested memory operation, including maintenance and
 verification.
@@ -44,8 +47,10 @@ memoidx edit show --id RETURNED_ID
 Save the ID and LUT from edit show. Open a NEW host session in this directory.
 Send this prompt (replace the native name for the host):
 
-> Delegate the complete retrieval of scout_probe_731 to the native
-> memoidx_scout subagent (Claude: memoidx-scout). Pass this workspace, project
+> Create and dispatch the native `memoidx_scout` subagent (Claude:
+> `memoidx-scout`) using the workspace-local `memoidx-scout.md` created by
+> `memoidx-init` at `<absolute-workspace>/memoidx-scout.md`. Delegate the
+> complete retrieval of scout_probe_731. Pass this workspace, project
 > scope and limit 1. Do not search in the main agent. Wait for the child to
 > complete the operation and return its JSON report with the native child
 > task/thread event.

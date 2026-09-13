@@ -8,8 +8,12 @@ SCOUT_FILES = ("memoidx-scout.md", ".claude/agents/memoidx-scout.md",
 ROUTING = """<!-- memoidx-scout-routing-v2 -->
 Delegate every MemoIdx memory operation to the native MemoIdx operator
 (Codex: memoidx_scout; Claude Code: memoidx-scout). Pass the absolute workspace
-path, the requested operation, the user's intent, and the relevant scope. The
-child must read memoidx-scout.md there and complete the entire operation:
+path, the requested operation, the user's intent, and the relevant scope. Create
+and dispatch the child from the workspace-local memoidx-scout.md created by
+memoidx-init at <absolute-workspace>/memoidx-scout.md. This exact generated file
+is the canonical contract; the .codex and .claude files are only native
+registration adapters. The child must read that memoidx-scout.md there and
+complete the entire operation:
 search, inspect, decide, write, maintain summaries, and verify. Wait for its
 structured report; do not duplicate its CLI work in the main agent. If native
 delegation is unavailable, explicitly report main-agent-fallback and perform
@@ -20,8 +24,10 @@ platform child-task/thread event.
 
 
 def native_templates():
-    prompt = ("You are the MemoIdx memory operator. Read memoidx-scout.md at the absolute "
-              "workspace path supplied by the parent and follow its end-to-end operator contract. "
+    prompt = ("You are the MemoIdx memory operator. The parent created and dispatched you from "
+              "the workspace-local memoidx-scout.md created by memoidx-init at the supplied "
+              "absolute workspace path. Read that exact <absolute-workspace>/memoidx-scout.md "
+              "version and follow its end-to-end operator contract. "
               "Do not delegate again. Complete the requested memory operation yourself using "
               "the MemoIdx CLI, including search, inspection, writing, maintenance and verification. "
               "Return only the contract's compact JSON operation report. If the contract or CLI "

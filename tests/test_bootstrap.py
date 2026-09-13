@@ -4,6 +4,7 @@ import tomllib
 from pathlib import Path
 
 from memoidx.bootstrap import initialize_workspace
+from memoidx.scout import ROUTING
 
 
 class BootstrapTests(unittest.TestCase):
@@ -26,6 +27,8 @@ class BootstrapTests(unittest.TestCase):
             self.assertEqual(native.read_text(), "# customized\n")
             self.assertEqual((workspace / "AGENTS.md").read_bytes(), before)
             self.assertEqual(before.count(b"<!-- memoidx-scout-routing-v2 -->"), 1)
+            self.assertIn("created by\nmemoidx-init at <absolute-workspace>/memoidx-scout.md", ROUTING)
+            self.assertIn("canonical contract", ROUTING)
 
     def test_workspace_bootstrap_preserves_and_augments_existing_agent_files(self):
         with tempfile.TemporaryDirectory(dir=Path.cwd()) as directory:
