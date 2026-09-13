@@ -30,7 +30,7 @@ def serialize_datetime(value: datetime) -> str:
     """Serialize an aware datetime in the project's ISO-8601 format."""
     if value.tzinfo is None or value.utcoffset() is None:
         raise ValueError("datetime must be timezone-aware")
-    return value.astimezone(UTC_PLUS_8).isoformat(timespec="seconds")
+    return value.astimezone(UTC_PLUS_8).isoformat(timespec="auto")
 
 
 def parse_datetime(value: str) -> datetime:

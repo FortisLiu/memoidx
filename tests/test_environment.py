@@ -5,7 +5,8 @@ from pathlib import Path
 
 class EnvironmentTests(unittest.TestCase):
     def test_can_write_inside_temporary_directory(self):
-        with tempfile.TemporaryDirectory() as directory:
+        # The managed test runner may not expose a system temp directory.
+        with tempfile.TemporaryDirectory(dir=Path.cwd()) as directory:
             root = Path(directory)
             target = root / "sample.txt"
 
