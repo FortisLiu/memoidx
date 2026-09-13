@@ -29,7 +29,15 @@ python -m PyInstaller --noconfirm --clean --onefile --name memoidx-init `
 if (-not $SkipInno) {
     $iscc = Get-Command iscc -ErrorAction SilentlyContinue
     if (-not $iscc) {
-        throw "Inno Setup is required to create install.exe. Install it, then rerun with iscc on PATH."
+        $known = @(
+            (Join-Path ${env:ProgramFiles(x86)} "Inno Setup 6\ISCC.exe"),
+            (Join-Path $env:ProgramFiles "Inno Setup 6\ISCC.exe"),
+            (Join-Path $env:LOCALAPPDATA "Programs\Inno Setup 6\ISCC.exe")
+        ) | Where-Object { $_ -and (Test-Path -LiteralPath $_) } | Select-Object -First 1
+        if ($known) { $iscc = Get-Item -LiteralPath $known }
+    }
+    if (-not $iscc) {
+        throw "Inno Setup is required to create install.exe. Install it or put iscc.exe on PATH."
     }
     & $iscc.Source (Join-Path $repo "installer\MemoIdx.iss")
     if ($LASTEXITCODE -ne 0) { throw "Inno Setup failed with exit code $LASTEXITCODE" }
